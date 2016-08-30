@@ -127,7 +127,7 @@ use Phalcon\Config\Adapter\Ini as ConfigIni;
 $di->setShared("mongo", function () use ($config) {
     $servers = "mongodb://" . $config->mongodb->host;
     $options = [
-        'replicaSet' => $config->mongodb->replicaSet,
+        //'replicaSet' => $config->mongodb->replicaSet,
         'username' => $config->mongodb->username,
         'password' => $config->mongodb->password,
         'db' => 'admin',

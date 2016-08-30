@@ -7,7 +7,7 @@ use Phalcon\Mvc\Collection;
 class BaseCollection extends Collection
 {  
     /** @var string */   
-    public $updateTime;                                                                                                                                                                       
+    public $updateTime; 
    
     public function beforeCreate()
     {  
@@ -35,11 +35,11 @@ class BaseCollection extends Collection
         return $ins->getConnection()->selectCollection($ins->getSource());
     }  
 
-    public static function getODMList($page = 0, $size = 100, array $filter = [], array $sort = [])
+    public static function getODMList($page = 1, $size = 100, array $filter = [], array $sort = [])
     {
         $condition = array(
             "conditions" => $filter,
-            "limit" => $size,                                                                                                                                                                 
+            "limit" => $size,
             "skip" => ($page - 1) * $size,
         );
         if (!empty($sort)) {
@@ -99,6 +99,20 @@ class BaseCollection extends Collection
             throw new Exception(json_encode($msgArr), \Error::ERR_MONGO_DEL);
         }
         return false;
+    }
+
+    public function toStringIdArray()
+    {
+        $term = $this->toArray();
+        $term['id'] = (string)$term['_id'];
+        $term['createTime'] = $this->getCreateTime();
+        unset($term['_id']);
+        return $term;
+    }
+
+    public function getCreateTime() {
+        $ts = $this->getId()->getTimestamp();
+        return date("Y-m-d H:i:s", $ts);
     }
 }
 

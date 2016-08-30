@@ -6,6 +6,7 @@ use Phalcon\Mvc\Url as UrlProvider;
 
 // 设置默认时区
 date_default_timezone_set('Asia/Shanghai');
+ini_set('display_errors',1);
 
 define('APP_PATH', realpath(dirname(dirname(__FILE__))));
 

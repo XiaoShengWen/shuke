@@ -16,7 +16,6 @@ class BaseController extends Controller
     {  
         $params = [];
         foreach ($args as $name => $_args) {
-            // get($name = null, $filters = null, $defaultValue = null, $notAllowEmpty = false, $noRecursive = false)
             $value = $this->request->get($name, ...$_args);
    
             // 改变 $notAllowEmpty 默认行为，返回400响应
