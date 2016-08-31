@@ -12,23 +12,27 @@ class StatisticController extends BaseController
 
     public function listAction()
     {
-        $this->conf = [
-            'name' => ['striptags', null, false],
-            'desc' => ['striptags', null, false],
+        $conf = [
+            'page_no' => ['int', 1, false],
+            'page_size' => ['int', 10, false],
         ];
+        $params = $this->getParams($conf);
         $statistic = new Statistics();
-        $result = $statistic->getODMList(); 
-        return $this->responseJson(Error::ERR_OK, $result);
+        $result = $statistic->getODMList($params['page_no'], $params['page_size']); 
+        $this->view->list = $result;
     }
 
     public function addAction()
     {
-        $this->conf = [
-            'name'    => ['striptags', null, true],
-            'desc'    => ['striptags', null, false],
-            'collect' => ['int', null, true],
-            'comment' => ['int', null, true],
-            'reward'  => ['int', 0, false],
+        $conf = [
+            'volume'    => ['int', null, true],
+            'chapter'   => ['int', null, true],
+            'name'      => ['striptags', null, true],
+            'desc'      => ['striptags', null, false],
+            'collect'   => ['int', null, true],
+            'comment'   => ['int', null, true],
+            'reward'    => ['int', 0, false],
+            'recommend' => ['int', 0, false],
         ];
         $params = $this->getParams($conf);
         $statistic = new Statistics();
@@ -37,12 +41,12 @@ class StatisticController extends BaseController
         }
         $statistic->save();
         
-        return $this->responseJson(Error::ERR_OK);
+        return $this->responseJson(Error::ERR_OK, $params);
     }
 
     public function editAction()
     {
-        $this->conf = [
+        $conf = [
             'name'    => ['striptags', null, false],
             'desc'    => ['striptags', null, false],
             'collect' => ['int', null, false],

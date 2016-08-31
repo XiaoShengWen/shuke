@@ -1,6 +1,6 @@
 {% extends "layout.volt" %}
    
-{% block head_script %}                                                                                                                                                                       
+{% block head_script %}
 {% endblock %}
    
 {% block content %}

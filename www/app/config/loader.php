@@ -14,6 +14,7 @@ $loader->registerDirs(array(
     
 $loader->registerNamespaces([
     'App\Models' => APP_PATH . "/app/models/",
+    'App\Models\Exception' => APP_PATH . "/app/models/exception",
 ]);
     
 $loader->register();
