@@ -4,7 +4,6 @@
 {% endblock %}
    
 {% block content %}
-<div id="app">test index</div>
 {% endblock %}
    
 {% block foot_script %} 

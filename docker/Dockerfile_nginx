@@ -1,0 +1,5 @@
+FROM wzy.cloud/library/nginx:1.9.8
+
+RUN mkdir /tmp/cache
+RUN chown www-data /tmp/cache
+
