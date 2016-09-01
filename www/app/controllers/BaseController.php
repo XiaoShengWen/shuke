@@ -16,12 +16,12 @@ class BaseController extends Controller
     {  
         $params = [];
         foreach ($args as $name => $_args) {
-            $value = $this->request->get($name, ...$_args);
+            $value = $this->request->get($name, $_args[0], $_args[1]);
    
             // 改变 $notAllowEmpty 默认行为，返回400响应
             $notAllowEmpty = $_args[2] ?: false;
             if (empty($value) && $notAllowEmpty) { 
-                throw new Exception\BadRequest('Invalid Params ($name)', Error::ERR_PARAMS);
+                throw new Exception\BadRequest("Invalid Params ($name)", Error::ERR_PARAMS);
             }
             $params[$name] = $value;
         }

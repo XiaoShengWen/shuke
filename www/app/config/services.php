@@ -65,7 +65,7 @@ if (!($di instanceof Phalcon\Di\FactoryDefault\Cli)) {
                 return false;
             }
 
-            if ($exception instanceof App\Models\Exception) {
+            if ($exception instanceof App\Models\Exception\BadRequest) {
                 $dispatcher->forward([
                     'controller' => 'index',
                     'action' => 'error',

@@ -1,7 +1,7 @@
 [mongodb]          
-host = "123.57.41.158:27017"
+host = "mongo.localhost"
 username = "root"
-password = "123456" 
+password = "123456"
 database = "wall-breaker"
    
 [application]      
