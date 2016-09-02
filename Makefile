@@ -3,6 +3,7 @@
 PWD := $(shell pwd)
 USER := $(shell id -u)
 GROUP := $(shell id -g)
+MONGO_ID := $(shell sudo docker ps -a | grep 'mongo' | awk '{print $$1}')
 
 all: run-web
 
@@ -27,4 +28,9 @@ webpack:
 	    -w /var/www/html/www \
 	    wzy.cloud/library/webpack \
 	    webpack $(cli) 
+
+mongo-export:
+	sudo docker exec -it \
+	    $(MONGO_ID) \
+		mongoexport -d wall-breaker -c novels -o ./var/www/mongo/backup.json
 
