@@ -1,12 +1,16 @@
 {% extends "layout.volt" %}
    
 {% block head_script %} 
+<link href="/css/jquery/jquery.datetimepicker.css" rel="stylesheet">
+<link href="/css/web/novel/list.css" rel="stylesheet">
 <script type="text/javascript">
-//$Info['test'] = "{{ test }}"; 
+$Info['href'] = '{{ href|json_encode }}'; 
+$Info['chart'] = '{{ chart }}'; 
 </script>
 {% endblock %}
    
 {% block content %}
+<!--面包屑-->
 <ul class="breadcrumb">
     <li>
         <i class="icon-home"></i>
@@ -15,9 +19,134 @@
     </li>
     <li><a href="#">轻小说</a></li>
 </ul>
+<!--面包屑结束-->
+
+<!--时间统计-->
 <div class="box span12">
     <div class="box-header">
-        <h2><i class="halflings-icon align-justify"></i><span class="break"></span>数据统计</h2>
+        <h2>
+            <i class="halflings-icon th"></i>
+            <span class="break">时间统计</span>
+        </h2>
+    </div>
+    <div class="box-content">
+        <ul class="nav tab-menu nav-tabs" id="myTab">
+            <li class="active"><a href="#novel-day">日</a></li>
+            <li><a href="#novel-week">周</a></li>
+            <li><a href="#novel-month">月</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane active" id="novel-day">
+                <div class="box-content">
+                    <table class="table">
+                        <thead> 
+                            <tr> 
+                                <th>日期</th> 
+                                <th>章节数量</th> 
+                                <th>字数</th> 
+                                <th>收藏</th> 
+                                <th>推荐</th> 
+                                <th>订阅</th> 
+                                <th>打赏</th> 
+                                <th>创作时间</th> 
+                            </tr> 
+                        </thead> 
+                        {% if !page is empty %}
+                        {% for index,l in day.items %}
+                        <tbody> 
+                            <tr> 
+                                <td>{{ index }}</th> 
+                                <td>{{ l['num'] }}</th> 
+                                <td>{{ l['count'] }}</th> 
+                                <td>{{ l['collect'] }}</th> 
+                                <td>{{ l['recommend'] }}</th> 
+                                <td>{{ l['subscribe'] }}</th> 
+                                <td>{{ l['reward'] }}</th> 
+                                <td>{{ l['produce_time_num'] }}</th> 
+                            </tr> 
+                        </tbody> 
+                        {%endfor%}
+                        {%endif%}
+                    </table>  
+                </div>
+            </div>
+            <div class="tab-pane" id="novel-week">
+                <div class="box-content">
+                    <table class="table">
+                        <thead> 
+                            <tr> 
+                                <th>日期</th> 
+                                <th>章节数量</th> 
+                                <th>字数</th> 
+                                <th>收藏</th> 
+                                <th>推荐</th> 
+                                <th>订阅</th> 
+                                <th>打赏</th> 
+                                <th>创作时间</th> 
+                            </tr> 
+                        </thead> 
+                        {% if !page is empty %}
+                        {% for index,l in week.items %}
+                        <tbody> 
+                            <tr> 
+                                <td>{{ index }}</th> 
+                                <td>{{ l['num'] }}</th> 
+                                <td>{{ l['count'] }}</th> 
+                                <td>{{ l['collect'] }}</th> 
+                                <td>{{ l['recommend'] }}</th> 
+                                <td>{{ l['subscribe'] }}</th> 
+                                <td>{{ l['reward'] }}</th> 
+                                <td>{{ l['produce_time_num'] }}</th> 
+                            </tr> 
+                        </tbody> 
+                        {%endfor%}
+                        {%endif%}
+                    </table>  
+                </div>
+            </div>
+            <div class="tab-pane" id="novel-month">
+                <div class="box-content">
+                    <table class="table">
+                        <thead> 
+                            <tr> 
+                                <th>日期</th> 
+                                <th>章节数量</th> 
+                                <th>字数</th> 
+                                <th>收藏</th> 
+                                <th>推荐</th> 
+                                <th>订阅</th> 
+                                <th>打赏</th> 
+                                <th>创作时间</th> 
+                            </tr> 
+                        </thead> 
+                        {% if !page is empty %}
+                        {% for index,l in month.items %}
+                        <tbody> 
+                            <tr> 
+                                <td>{{ index }}</th> 
+                                <td>{{ l['num'] }}</th> 
+                                <td>{{ l['count'] }}</th> 
+                                <td>{{ l['collect'] }}</th> 
+                                <td>{{ l['recommend'] }}</th> 
+                                <td>{{ l['subscribe'] }}</th> 
+                                <td>{{ l['reward'] }}</th> 
+                                <td>{{ l['produce_time_num'] }}</th> 
+                            </tr> 
+                        </tbody> 
+                        {%endfor%}
+                        {%endif%}
+                    </table>  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--时间统计结束-->
+
+<!--章节统计-->
+<div class="box span12">
+    <div class="box-header">
+        <h2><i class="halflings-icon align-justify"></i><span class="break"></span>章节统计</h2>
         <div class="box-icon">
             <a href="#" id="toggle-novel-add" class="btn-setting"><i class="halflings-icon wrench"></i></a>
             <a href="#" class="btn-minimize"><i class="halflings-icon chevron-up"></i></a>
@@ -37,11 +166,14 @@
                     <th>评论</th> 
                     <th>打赏</th> 
                     <th>推荐</th> 
+                    <th>发布时间</th> 
+                    <th>创作消耗</th> 
+                    <th>字数</th> 
                     <th>操作</th> 
                 </tr> 
             </thead> 
-            {% if !list is empty %}
-            {% for l in list %}
+            {% if !page is empty %}
+            {% for l in page.items %}
             <tbody> 
                 <tr> 
                     <td style="display:none">{{ l['id'] }}</th> 
@@ -53,6 +185,9 @@
                     <td>{{ l['comment'] }}</td> 
                     <td>{{ l['reward'] }}</td> 
                     <td>{{ l['recommend'] }}</td> 
+                    <td>{{ l['publish_time'] }}</td> 
+                    <td>{{ l['produce_time_num'] }}</td> 
+                    <td>{{ l['count'] }}</td> 
                     <td>
                         <button class="btn btn-small btn-info novel-edit-btn">修改</button>
                         <button class="btn btn-small btn-danger novel-del-btn">删除</button>
@@ -61,47 +196,50 @@
             </tbody> 
             {%endfor%}
             {%endif%}
-         </table>  
-         <div class="pagination pagination-centered">
-          <ul>
-            <li><a href="#">Prev</a></li>
-            <li class="active">
-              <a href="#">1</a>
-            </li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">Next</a></li>
-          </ul>
-        </div>     
+        </table>  
+        {% include "common/phalcon-page.volt" %}
     </div>
 </div><!--/span-->
+<!--章节统计结束-->
 
-<!--绘图-->
+<!--数据图-->
 <div class="box span12">
     <div class="box-header">
         <h2>
             <i class="halflings-icon th"></i>
-            <span class="break"></span>数据展示
+            <span class="break">数据图示</span>
         </h2>
     </div>
     <div class="box-content">
         <ul class="nav tab-menu nav-tabs" id="myTab">
-            <li class="active"><a href="#collect-chart">收藏</a></li>
-            <li><a href="#comment-chart">评论</a></li>
+            <li class="active"><a href="#chapter-chart">章节</a></li>
+            <li><a href="#day-chart">日</a></li>
+            <li><a href="#week-chart">周</a></li>
+            <li><a href="#month-chart">月</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
-            <div class="tab-pane active" id="collect-chart">
-                <div id="sincos"  class="center" style="height:300px;" ></div>
-                <p id="hoverdata">Mouse position at (<span id="x">0</span>, <span id="y">0</span>). <span id="clickdata"></span></p>
+            <div class="tab-pane active" id="chapter-chart">
+                <div class="box-content novel-echart" id="chapter_chart" >
+                </div>
             </div>
-            <div class="tab-pane" id="comment-chart">
+            <div class="tab-pane" id="day-chart">
+                <div class="box-content novel-echart" id="day_chart">
+                </div>
+            </div>
+            <div class="tab-pane" id="week-chart">
+                <div class="box-content novel-echart" id="week_chart">
+                </div>
+            </div>
+            <div class="tab-pane" id="month-chart">
+                <div class="box-content novel-echart" id="month_chart">
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!--绘图结束-->
+<!--数据图-->
 
+<!--章节统计表单-->
 <div class="modal hide fade" id="novel-add-form">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
@@ -163,6 +301,24 @@
                     <input type="number" class="form-control" id="recommend" name="recommend" placeholder="请输入推荐" value="0" > 
                 </div>
               </div>
+              <div class="control-group">
+                <label class="control-label" for="focusedInput">发布时间</label>
+                <div class="controls">
+                    <input type="text" class="form-control" id="publish_time" name="publish_time" value="0" > 
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="focusedInput">创作消耗番茄(单位/半小时)</label>
+                <div class="controls">
+                    <input type="number" class="form-control" id="produce_time_num" name="produce_time_num" placeholder="请输入创作消耗时间" value="0" > 
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="focusedInput">字数</label>
+                <div class="controls">
+                    <input type="number" class="form-control" id="count" name="count" placeholder="请输入字数" value="0" > 
+                </div>
+              </div>
             </fieldset>
         </form>
     </div>
@@ -171,10 +327,13 @@
         <a id="novel-submit" href="#" class="btn btn-primary">提交</a>
     </div>
 </div>
+<!--章节统计表单结束-->
 {% endblock %}
    
 {% block foot_script %} 
 <script type="text/javascript" src="/js/web/novel/list.js" ></script>
 <script type="text/javascript" src="/js/common/info.js" ></script>
+<script type="text/javascript" src="/js/jquery/jquery.datetimepicker.full.js" ></script>
+<script type="text/javascript" src="/js/other/echarts.common.min.js" ></script>
 {% endblock %}
 
