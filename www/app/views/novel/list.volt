@@ -21,6 +21,20 @@ $Info['chart'] = '{{ chart }}';
 </ul>
 <!--面包屑结束-->
 
+<!--数据总和-->
+<div class="row-fluid">
+    {% for index,l in sum_data %}
+    <div class="statbox purple span3" ontablet="span6" ondesktop="span3">
+        <div class="number">{{ l }}<i class="icon-arrow-up"></i></div>
+        <div class="title">{{ index  }}</div>
+        <div class="footer">
+            <a href="#">{{ params_note[index]  }}</a>
+        </div>  
+    </div>
+    {%endfor%}
+</div>
+<!--数据总和-->
+
 <!--时间统计-->
 <div class="box span12">
     <div class="box-header">
@@ -166,6 +180,7 @@ $Info['chart'] = '{{ chart }}';
                     <th>评论</th> 
                     <th>打赏</th> 
                     <th>推荐</th> 
+                    <th>月票</th> 
                     <th>发布时间</th> 
                     <th>创作消耗</th> 
                     <th>字数</th> 
@@ -185,6 +200,7 @@ $Info['chart'] = '{{ chart }}';
                     <td>{{ l['comment'] }}</td> 
                     <td>{{ l['reward'] }}</td> 
                     <td>{{ l['recommend'] }}</td> 
+                    <td>{{ l['month_ticket'] }}</td> 
                     <td>{{ l['publish_time'] }}</td> 
                     <td>{{ l['produce_time_num'] }}</td> 
                     <td>{{ l['count'] }}</td> 
@@ -299,6 +315,12 @@ $Info['chart'] = '{{ chart }}';
                 <label class="control-label" for="focusedInput">推荐</label>
                 <div class="controls">
                     <input type="number" class="form-control" id="recommend" name="recommend" placeholder="请输入推荐" value="0" > 
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="focusedInput">月票</label>
+                <div class="controls">
+                    <input type="number" class="form-control" id="month_ticket" name="month_ticket" placeholder="请输入月票" value="0" > 
                 </div>
               </div>
               <div class="control-group">

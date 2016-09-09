@@ -5,35 +5,58 @@ use App\Models\Exception;
 
 class Novels extends App\Models\BaseCollection
 {
-    // 章节名称
-    public $name = 'name';
+    public $name             = 'name';             // 章节名称
+    public $desc             = 'desc';             // 描述
+    public $volume           = 'volume';           // 卷
+    public $chapter          = 'chapter';          // 章
+    public $collect          = 'collect';          // 收藏
+    public $comment          = 'comment';          // 评论
+    public $reward           = 'reward';           // 奖励
+    public $recommend        = 'recommend';        // 推荐
+    public $publish_time     = 'publish_time';     // 发布时间
+    public $produce_time_num = 'produce_time_num'; // 创作消耗时间
+    public $count            = 'count';            // 字数
+    public $subscribe        = 'subscribe';        // 订阅
+    public $month_ticket     = 'month_ticket';     // 月票
 
-    // 描述 
-    public $desc = 'desc';
+    public function getParamsAttr()
+    {
+        return $params_attr = [
+            'int' => [
+                $this->collect,
+                $this->comment,
+                $this->reward,
+                $this->recommend,
+                $this->count,
+                $this->subscribe,
+                $this->month_ticket,
+            ],
+        ];
+    }
 
-    // 收藏 
-    public $collect = 'collect';
+    public function getParamsNote()
+    {
+        return $ret = [
+            $this->name             => '章节名称',
+            $this->desc             => '描述',
+            $this->volume           => '卷',
+            $this->chapter          => '章',
+            $this->collect          => '收藏',
+            $this->comment          => '评论',
+            $this->reward           => '打赏',
+            $this->recommend        => '推荐',
+            $this->publish_time     => '发布时间',
+            $this->produce_time_num => '创作时间',
+            $this->count            => '字数',
+            $this->subscribe        => '订阅',
+            $this->month_ticket     => '月票',
+        ];
+    }
 
-    // 评论
-    public $comment = 'comment';
-
-    // 奖励 
-    public $reward = 'reward';
-
-    // 推荐 
-    public $recommend = 'recommend';
-
-    // 发布时间 
-    public $publish_time = 'publish_time';
-
-    // 创作消耗时间
-    public $produce_time_num = 'produce_time_num';
-
-    // 字数
-    public $count = 'count';
-
-    // 订阅 
-    public $subscribe = 'subscribe';
+    public function getParam($name)
+    {
+        return $this->$name;
+    }
 
     public function getSource()
     {
@@ -72,6 +95,11 @@ class Novels extends App\Models\BaseCollection
     public function getChartData($resource, array $field_arr, $limit = 30)
     {
         krsort($resource);
+        $arr_num = count($resource);
+        if ($arr_num >= $limit) {
+            $slice_start = $arr_num - $limit;
+        }
+        $resource = array_slice($resource,$slice_start);
         $result = [];
         foreach ($resource as $one) {
             // 章节统计
@@ -94,6 +122,31 @@ class Novels extends App\Models\BaseCollection
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    public function getSumData(array $field_arr ,$novel_id = "sum")
+    {
+        $group['$group']['_id'] = $novel_id;
+        foreach ($field_arr as $field) {
+            $match['$project'][$field] = 1;
+            $group['$group'][$field] = [
+                '$sum' => '$'.$field,
+            ];
+        }
+        $ret = static::aggregate(
+            [
+                $match,
+                $group,
+            ]
+        );
+        if (isset($ret['result'][0])) {
+            $id = $ret['result'][0]['_id'];
+            unset($ret['result'][0]['_id']);
+            $result = $ret['result'][0];
+        } else {
+            $result = [];
         }
         return $result;
     }
