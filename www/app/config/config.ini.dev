@@ -3,6 +3,13 @@ host = "mongo.localhost"
 username = "root"
 password = "123456"
 database = "wall-breaker"
+
+[mysql]
+host = "123.57.41.158"
+username = "root"
+password = "123456"
+database = "novel"
+
    
 [application]      
 controllersDir = /app/controllers/
