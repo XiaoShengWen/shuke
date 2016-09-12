@@ -10,6 +10,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\ErrorHandler;
 use Phalcon\Mvc\Application;
+use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 
 // Web服务相关配置，CLI模式下不要执行
 if (!($di instanceof Phalcon\Di\FactoryDefault\Cli)) {
@@ -193,4 +194,14 @@ $di->setShared('filter', function () use ($di) {
 
     return $filter;
 });   
+
+// 配置数据库 
+$di->set('db', function () use($config) {
+    return new DbAdapter([
+        "host"     => $config->mysql->host,
+        "username" => $config->mysql->username,
+        "password" => $config->mysql->password,
+        "dbname"   => $config->mysql->database 
+    ]);
+});
 

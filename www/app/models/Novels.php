@@ -2,6 +2,7 @@
 
 use App\Models\Experiment;
 use App\Models\Exception;
+use Phalcon\Mvc\Model;
 
 class Novels extends App\Models\BaseCollection
 {
@@ -56,11 +57,6 @@ class Novels extends App\Models\BaseCollection
     public function getParam($name)
     {
         return $this->$name;
-    }
-
-    public function getSource()
-    {
-        return "novels";
     }
 
     public function beforeCreate()
@@ -128,26 +124,22 @@ class Novels extends App\Models\BaseCollection
 
     public function getSumData(array $field_arr ,$novel_id = "sum")
     {
-        $group['$group']['_id'] = $novel_id;
+        $columns = [];
         foreach ($field_arr as $field) {
-            $match['$project'][$field] = 1;
-            $group['$group'][$field] = [
-                '$sum' => '$'.$field,
-            ];
+            $columns[] = $field;
         }
-        $ret = static::aggregate(
-            [
-                $match,
-                $group,
-            ]
+        $columns = implode($columns,',');
+
+        $result = static::find(array(
+            'columns' => $columns,
+            )
         );
-        if (isset($ret['result'][0])) {
-            $id = $ret['result'][0]['_id'];
-            unset($ret['result'][0]['_id']);
-            $result = $ret['result'][0];
-        } else {
-            $result = [];
+        $ret = [];
+        foreach ($result as $one) {
+            foreach ($field_arr as $field) {
+                $ret[$field] += $one->$field;
+            }
         }
-        return $result;
+        return $ret;
     }
 }
