@@ -1,5 +1,27 @@
 <?php
 include dirname(__DIR__)."/app/library/ganon.php";
+include dirname(__DIR__)."/vendor/autoload.php";
+$config = array(
+    'host'       => '127.0.0.1',
+    'user'       => 'root',
+    'password'   => '123456',
+    'database'   => 'novel',
+    // optional
+
+    'fetchMode'  => \PDO::FETCH_ASSOC,
+    'charset'    => 'utf8',
+    'port'       => 3306,
+    'unixSocket' => null,
+);
+
+$dbConn = new \Simplon\Mysql\Mysql(
+    $config['host'],
+    $config['user'],
+    $config['password'],
+    $config['database']
+);
+$zone = $dbConn->executeSql("set time_zone = '+8:00';");
+
 do{
     $html = file_get_dom('http://www.hbooker.com/book/book_detail?book_id=100017833');
     if($html) {
@@ -22,9 +44,12 @@ do{
                 }
             }
         }
-        echo '<pre>'; 
-        var_dump($result); 
-        echo '</pre>';
+        $data = array(
+            'id'   => false,
+            'collect' => $result['collect'],
+            'click'  => $result['click'],
+        );
+        $id = $dbConn->insert('novel_info', $data);
     }
 } while(!$html);
 
