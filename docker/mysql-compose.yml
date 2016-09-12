@@ -1,0 +1,12 @@
+version: '2'
+services:
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456 
+    image: docker.io/mysql 
+    container_name: mysql-${DEV_USER}
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
