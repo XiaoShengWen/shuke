@@ -201,7 +201,8 @@ $di->set('db', function () use($config) {
         "host"     => $config->mysql->host,
         "username" => $config->mysql->username,
         "password" => $config->mysql->password,
-        "dbname"   => $config->mysql->database 
+        "dbname"   => $config->mysql->database,
+        "charset"  => 'utf8'
     ]);
 });
 

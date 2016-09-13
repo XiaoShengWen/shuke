@@ -1,6 +1,9 @@
 <?php
 include dirname(__DIR__)."/app/library/ganon.php";
 include dirname(__DIR__)."/vendor/autoload.php";
+ini_set('date.timezone','Asia/Shanghai');
+date_default_timezone_set('Asia/Shanghai');
+
 $config = array(
     'host'       => '127.0.0.1',
     'user'       => 'root',
@@ -22,6 +25,46 @@ $dbConn = new \Simplon\Mysql\Mysql(
 );
 $zone = $dbConn->executeSql("set time_zone = '+8:00';");
 
+// 根据打点日志，获取时间间隔
+function getShowInfo($chapter,$dbConn)
+{
+    $time_range = $dbConn->fetchRow("select * from web_novel_show_log where chapter = {$chapter}");
+    if ($time_range) {
+        $start = $dbConn->fetchRow("select * from novel_info where create_time <= '{$time_range['create_time']}' order by id desc limit 1");
+        $end = $dbConn->fetchRow("select * from novel_info where create_time >= '".$time_range['end_time']."' limit 1");
+
+        $diff = [
+            'collect' => $end['collect'] - $start['collect'],
+            'click' => $end['click'] 
+        ];
+    } else {
+        $diff =[];
+    }
+    return $diff;
+}
+
+
+// 根据文章链接，获取发布日期和字数
+function getPublishDateAndCount($href)
+{
+    $result = [];
+    do{
+        $html = file_get_dom($href);
+        foreach ($html("div[class='read-hd']") as $one) {
+            foreach ($one("p") as $final) {
+                $date_obj = $final('span',2);
+                $date  = $date_obj->getChild(0)->getInnerText();
+                $result['publish_time'] = substr($date,15);
+                $count_obj = $final('span',5);
+                $count = $count_obj->getChild(0)->getInnerText();
+                $result['count'] = substr($count,9);
+            }
+        }
+    } while(!$html);
+    return $result;
+}
+
+
 do{
     $html = file_get_dom('http://www.hbooker.com/book/book_detail?book_id=100017833');
     if($html) {
@@ -38,18 +81,97 @@ do{
                 if (!empty($click)) {
                     $string = trim($click);
                     $first = substr($string,12);
-                    $second = substr($first,0,3);
+                    $second = substr($first,0,-3);
                     $result['click'] = $second * 10000; 
                     break;
                 }
             }
         }
+        foreach ($html("div[class='book-intro-cnt']") as $e) {
+            foreach ($e('.book-property') as $one) {
+                $recommend_obj = $one('span',5);
+                foreach ($recommend_obj('.J_Recommend_Rec_total') as $final) {
+                    $result['recommend'] = $final->getChild(0)->getInnerText();
+                }
+
+                // 从href中获取
+                /* $count_obj = $one('span',8); */
+                /* $result['count'] = $count_obj->getChild(1)->getInnerText(); */
+            }
+        }
+        foreach ($html("div[class='mod-tit1']") as $one) {
+            foreach ($one('#J_CommentNum') as $final) {
+                $result['comment'] = $final->getChild(0)->getInnerText();
+            }
+        }
+        $new_list = [];
+        foreach ($html("div[class='mod-bd']") as $one) {
+            $flag_num = 0;
+            foreach ($one("ul") as $bottom) {
+                if ($flag_num == 1) {
+                    foreach ($bottom("li") as $index => $li) {
+                        $obj_a = $li->getChild(0);
+                        $title = $obj_a->getInnerText();
+                        $num_i = strpos($title,"</i>");
+                        $all_title  = substr($title,$num_i + 4); 
+                        $all_arr = explode('.',$all_title);
+                        $new_list[$index]['chapter'] = trim($all_arr[0]);
+                        $new_list[$index]['title'] = trim($all_arr[1]);
+                        $new_list[$index]['href'] = $obj_a->attributes['href'];
+                    }
+                    $limit = 2;
+                    $new_list = array_slice($new_list,-$limit);
+                    ksort($new_list);
+                }
+                $flag_num++;
+            }
+        } 
+        $max_chapter = $dbConn->fetchRow("select max(chapter) as max from novels ");
+        foreach ($new_list as $index => $chapter) {
+            if ($chapter['chapter'] > $max_chapter['max']) {
+                $date_and_count = getPublishDateAndCount($chapter['href']);
+                $data_arr = [
+                    'name'      => $chapter['title'],
+                    'desc'      => "",
+                    'end_time'      => "",
+                    'chapter'   => $chapter['chapter'],
+                    'collect'   => $result['collect'],
+                    'comment'   => $result['comment'],
+                    'recommend' => $result['recommend'],
+                ];
+                $data_arr = array_merge($data_arr,$date_and_count);
+                $dbConn->insert('novels',$data_arr);
+            } else {
+                // 更新章节数据
+                if ($index != count($new_list) - 1) {
+                    $chapter_old = $dbConn->fetchRow("select * from novels where chapter = {$chapter['chapter']}");
+                    $date_and_count = getPublishDateAndCount($chapter['href']);
+                    $data_arr = [
+                        'collect'   => $result['collect'] - $chapter_old['collect'],
+                        'comment'   => $result['comment'] - $chapter_old['comment'],
+                        'recommend' => $result['recommend'] - $chapter_old['recommend'],
+                        'click'     => $result['click'],
+                        'end_time' => date('Y-m-d H:i:s',time() + 8 *3600 ),
+                    ];
+                    $diff = getShowInfo($chapter['chapter'],$dbConn);
+                    if ($diff) {
+                        $data_arr['collect_show'] = $diff['collect'];
+                    }
+                    $dbConn->update('novels',['id' => $chapter_old['id']],$data_arr);
+                }
+            }
+        }
+        // 当发布最新章节时，统计上一章的数据
+        // 1 根据打点日志记录的在线显示时间，区分推荐来源
+        // 2 记录时，根据href获取发布时间等内容
         $data = array(
-            'id'   => false,
-            'collect' => $result['collect'],
-            'click'  => $result['click'],
+            'id'             => false,
+            'collect'        => $result['collect'],
+            'click'          => $result['click'],
+            // 'create_time' => date('Y-m-d H:i:s',time() + 8 * 3600),
         );
         $id = $dbConn->insert('novel_info', $data);
     }
 } while(!$html);
+
 

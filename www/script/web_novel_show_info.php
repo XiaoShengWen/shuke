@@ -21,7 +21,6 @@ $dbConn = new \Simplon\Mysql\Mysql(
     $config['password'],
     $config['database']
 );
-$zone = $dbConn->executeSql("set time_zone = '+8:00';");
 
 $flag = false;
 $title = "从零开始当魔王";
@@ -71,7 +70,7 @@ do {
                 'id' => $update_result['id']
             ];
             $update_data = [
-                'end_time' => date('Y-m-d H:i:s',time()),
+                'end_time' => date('Y-m-d H:i:s',time() + 8 * 3600),
             ];
             $id = $dbConn->update($table,$conds, $update_data);
         }

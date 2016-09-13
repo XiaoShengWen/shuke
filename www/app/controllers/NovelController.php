@@ -8,7 +8,7 @@ class NovelController extends BaseController
     public function initialize() {
         $id = trim($this->request->get('id'));
         if ($id) {
-            $this->novel = Novels::findById($id);
+            $this->novel = Novels::findFirst("id={$id}");
         } 
     }
 
@@ -21,7 +21,7 @@ class NovelController extends BaseController
         // 章节统计
         $params = $this->getParams($conf);
         $novel = new Novels();
-        $result = $novel->getODMList(1, 1000, [], ['publish_time' => -1]); 
+        $result = $novel->getODMList(1, 1000, [], 'id desc'); 
         $paginator = new PaginatorArray(
             array(
                 "data"  => $result,
@@ -134,7 +134,7 @@ class NovelController extends BaseController
                 $this->novel->$index = $value;
             }
         }
-        $this->novel->save();
+        $this->novel->update();
         
         return $this->responseJson(Error::ERR_OK);
     }

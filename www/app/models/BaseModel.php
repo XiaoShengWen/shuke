@@ -17,18 +17,19 @@ class BaseModel extends Model
         $this->updateTime = date("Y-m-d H:i:s"); 
     }
 
-    public static function getODMList($page = 1, $size = 100, array $filter = [], array $sort = [])
+    public static function getODMList($page = 1, $size = 100, array $filter = [], $order = "id")
     {
+        $limit_start = ($page - 1) * $size;
+        $limit_end = $page * $size;
         $condition = array(
             "conditions" => $filter,
-            "limit" => $size,
-            "skip" => ($page - 1) * $size,
+            "limit" => "{$limit_start},{$limit_end}",
         );
-        if (!empty($sort)) {
-            $condition["sort"] = $sort;
+        if (!empty($order)) {
+            $condition["order"] = $order;
         }
         $result = static::find($condition);
 
-        return $result;
+        return $result->toArray();
     }
 }
