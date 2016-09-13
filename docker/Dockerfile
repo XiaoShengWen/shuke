@@ -1,3 +1,3 @@
-FROM wzy.cloud/library/webpack 
+FROM wzy.cloud/php-phalcon 
 
-RUN npm install css-loader style-loader jquery babel-loader babel-core babel-preset-es2015 
+RUN docker-php-ext-install pdo_mysql
