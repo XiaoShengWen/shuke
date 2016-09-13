@@ -50,7 +50,13 @@ $Info['chart'] = '{{ chart }}';
             <li><a href="#novel-month">月</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
-            <div class="tab-pane active" id="novel-day">
+            {% for date_type,date in date_statistic %}
+            <div class="tab-pane 
+                {% if date_type == 'day' %}
+                active
+                {% endif %}
+                " 
+                id="novel-{{ date_type }}">
                 <div class="box-content">
                     <table class="table">
                         <thead> 
@@ -62,11 +68,13 @@ $Info['chart'] = '{{ chart }}';
                                 <th>推荐</th> 
                                 <th>订阅</th> 
                                 <th>打赏</th> 
+                                <th>章收比</th> 
+                                <th>章推比</th> 
                                 <th>创作时间</th> 
                             </tr> 
                         </thead> 
-                        {% if !page is empty %}
-                        {% for index,l in day.items %}
+                        {% if !date.items is empty %}
+                        {% for index,l in date.items %}
                         <tbody> 
                             <tr> 
                                 <td>{{ index }}</th> 
@@ -76,6 +84,8 @@ $Info['chart'] = '{{ chart }}';
                                 <td>{{ l['recommend'] }}</th> 
                                 <td>{{ l['subscribe'] }}</th> 
                                 <td>{{ l['reward'] }}</th> 
+                                <td>{{ round(l['collect']/l['num'],1) }}</th> 
+                                <td>{{ round(l['recommend']/l['num'],1) }}</th> 
                                 <td>{{ l['produce_time_num'] }}</th> 
                             </tr> 
                         </tbody> 
@@ -84,74 +94,7 @@ $Info['chart'] = '{{ chart }}';
                     </table>  
                 </div>
             </div>
-            <div class="tab-pane" id="novel-week">
-                <div class="box-content">
-                    <table class="table">
-                        <thead> 
-                            <tr> 
-                                <th>日期</th> 
-                                <th>章节数量</th> 
-                                <th>字数</th> 
-                                <th>收藏</th> 
-                                <th>推荐</th> 
-                                <th>订阅</th> 
-                                <th>打赏</th> 
-                                <th>创作时间</th> 
-                            </tr> 
-                        </thead> 
-                        {% if !page is empty %}
-                        {% for index,l in week.items %}
-                        <tbody> 
-                            <tr> 
-                                <td>{{ index }}</th> 
-                                <td>{{ l['num'] }}</th> 
-                                <td>{{ l['count'] }}</th> 
-                                <td>{{ l['collect'] }}</th> 
-                                <td>{{ l['recommend'] }}</th> 
-                                <td>{{ l['subscribe'] }}</th> 
-                                <td>{{ l['reward'] }}</th> 
-                                <td>{{ l['produce_time_num'] }}</th> 
-                            </tr> 
-                        </tbody> 
-                        {%endfor%}
-                        {%endif%}
-                    </table>  
-                </div>
-            </div>
-            <div class="tab-pane" id="novel-month">
-                <div class="box-content">
-                    <table class="table">
-                        <thead> 
-                            <tr> 
-                                <th>日期</th> 
-                                <th>章节数量</th> 
-                                <th>字数</th> 
-                                <th>收藏</th> 
-                                <th>推荐</th> 
-                                <th>订阅</th> 
-                                <th>打赏</th> 
-                                <th>创作时间</th> 
-                            </tr> 
-                        </thead> 
-                        {% if !page is empty %}
-                        {% for index,l in month.items %}
-                        <tbody> 
-                            <tr> 
-                                <td>{{ index }}</th> 
-                                <td>{{ l['num'] }}</th> 
-                                <td>{{ l['count'] }}</th> 
-                                <td>{{ l['collect'] }}</th> 
-                                <td>{{ l['recommend'] }}</th> 
-                                <td>{{ l['subscribe'] }}</th> 
-                                <td>{{ l['reward'] }}</th> 
-                                <td>{{ l['produce_time_num'] }}</th> 
-                            </tr> 
-                        </tbody> 
-                        {%endfor%}
-                        {%endif%}
-                    </table>  
-                </div>
-            </div>
+            {%endfor%}
         </div>
     </div>
 </div>

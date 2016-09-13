@@ -46,19 +46,20 @@ class NovelController extends BaseController
             $list_arr = new PaginatorArray(
                 array(
                     "data"  => $date_arr,
-                    "limit" => 10,
+                    "limit" => 50,
                     "page"  => $params['page_no'],
                 )
             );
             $list = $list_arr->getPaginate();
-            $this->view->$date_type = $list;
+            $day_list[$date_type] = $list;
         }
+        $this->view->date_statistic = $day_list;
 
         $this->view->href = [
             'page' => "/novel/list?page_no=",
             'add'  => "/novel/add",
             'edit' => "/novel/edit",
-            'del'  => "/novel/del",
+            'del'  => "/novel/del&id=",
         ];
 
         $field_arr = [
@@ -92,6 +93,7 @@ class NovelController extends BaseController
             $novel->produce_time_num => ['alphanum', 0, true],
             $novel->count            => ['alphanum', 0, true],
             $novel->month_ticket     => ['alphanum', 0, false],
+            $novel->subscribe        => ['alphanum', 0, false],
         ];
         $params = $this->getParams($conf);
         $attr_arr = $novel->getParamsAttr();

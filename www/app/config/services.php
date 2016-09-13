@@ -102,6 +102,7 @@ if (!($di instanceof Phalcon\Di\FactoryDefault\Cli)) {
 
         $compiler = $volt->getCompiler();
         $compiler->addFunction('in_array', 'in_array');
+        $compiler->addFunction('round', 'round');
         $compiler->addFunction('implode', 'implode');
         $compiler->addFunction('is_a', 'is_a');
 
