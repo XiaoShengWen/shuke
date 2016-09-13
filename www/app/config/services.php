@@ -124,25 +124,25 @@ $di->set('log', function () use ($config) {
 ErrorHandler::register($di->get('log'));
 
 // 设置MongoDB
-use Phalcon\Config\Adapter\Ini as ConfigIni;
-$di->setShared("mongo", function () use ($config) {
-    $servers = "mongodb://" . $config->mongodb->host;
-    $options = [
-        //'replicaSet' => $config->mongodb->replicaSet,
-        'username' => $config->mongodb->username,
-        'password' => $config->mongodb->password,
-        'db' => 'admin',
-        'connectTimeoutMS' => 5000,
-        'readPreference' => MongoClient::RP_PRIMARY_PREFERRED,
-    ];
-    $mongo = new MongoClient($servers, $options);
-    return $mongo->selectDB($config->mongodb->database);
-});
+/* use Phalcon\Config\Adapter\Ini as ConfigIni; */
+/* $di->setShared("mongo", function () use ($config) { */
+/*     $servers = "mongodb://" . $config->mongodb->host; */
+/*     $options = [ */
+/*         //'replicaSet' => $config->mongodb->replicaSet, */
+/*         'username' => $config->mongodb->username, */
+/*         'password' => $config->mongodb->password, */
+/*         'db' => 'admin', */
+/*         'connectTimeoutMS' => 5000, */
+/*         'readPreference' => MongoClient::RP_PRIMARY_PREFERRED, */
+/*     ]; */
+/*     $mongo = new MongoClient($servers, $options); */
+/*     return $mongo->selectDB($config->mongodb->database); */
+/* }); */
 
-// Phalcon框架MongoDB组件必备
-$di->setShared('collectionManager', function () {
-    return new \Phalcon\Mvc\Collection\Manager();
-});
+/* // Phalcon框架MongoDB组件必备 */
+/* $di->setShared('collectionManager', function () { */
+/*     return new \Phalcon\Mvc\Collection\Manager(); */
+/* }); */
 
 // 设置Session
 $di->setShared('session', function () use ($di) {

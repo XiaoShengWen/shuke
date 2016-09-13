@@ -1,10 +1,6 @@
 <?php
 
-use App\Models\Experiment;
-use App\Models\Exception;
-use Phalcon\Mvc\Model;
-
-class Novels extends App\Models\BaseCollection
+class Novels extends App\Models\BaseModel
 {
     public $name             = 'name';             // 章节名称
     public $desc             = 'desc';             // 描述
