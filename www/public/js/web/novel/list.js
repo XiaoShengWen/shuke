@@ -5,9 +5,6 @@ $(function() {
     var chart = Web.Info.chart;
     var chart_obj = eval('(' + chart + ')');  
 
-    console.log(chart_obj);
-
-    //章节图示echart
     var chart_arr        = new Array();
     chart_arr['chapter'] = echarts.init(document.getElementById('chapter_chart'));
     chart_arr['day']     = echarts.init(document.getElementById('day_chart'));
@@ -88,7 +85,6 @@ $(function() {
     $('.novel-edit-btn').click(function(){
         $(this).parent().parent().find('td').each(function(){
             var value = $(this).text();
-            console.log(value);
             var input_index = $(this).index();
             $('#novel-form').find('input.form-control').eq(input_index).attr('value',value);
         });

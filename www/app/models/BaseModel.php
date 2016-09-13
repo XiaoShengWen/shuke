@@ -5,18 +5,6 @@ use Phalcon\Mvc\Model;
 
 class BaseModel extends Model 
 {
-    public $updateTime; 
-   
-    public function beforeCreate()
-    {  
-        $this->updateTime = date("Y-m-d H:i:s"); 
-    }  
-   
-    public function beforeUpdate()
-    {
-        $this->updateTime = date("Y-m-d H:i:s"); 
-    }
-
     public static function getODMList($page = 1, $size = 100, array $filter = [], $order = "id")
     {
         $limit_start = ($page - 1) * $size;

@@ -55,16 +55,6 @@ class Novels extends App\Models\BaseModel
         return $this->$name;
     }
 
-    public function beforeCreate()
-    {
-        parent::beforeCreate();
-    }
-
-    public function beforeUpdate()
-    {
-        parent::beforeUpdate();
-    }
-
     public function statisticByDate(array $resource, array $field_arr)
     {
         $result = [];

@@ -8,7 +8,7 @@ class NovelController extends BaseController
     public function initialize() {
         $id = trim($this->request->get('id'));
         if ($id) {
-            $this->novel = Novels::findFirst("id={$id}");
+            $this->novel = Novels::findFirst("id = {$id}");
         } 
     }
 
@@ -134,7 +134,7 @@ class NovelController extends BaseController
                 $this->novel->$index = $value;
             }
         }
-        $this->novel->update();
+        $result = $this->novel->update();
         
         return $this->responseJson(Error::ERR_OK);
     }
