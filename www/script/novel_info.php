@@ -127,14 +127,15 @@ do{
             }
         } 
         $max_chapter = $dbConn->fetchRow("select max(chapter) as max from novels ");
+        $href_date_arr = [];
+        foreach ($new_list as $index => $chapter) {
+            $href_date_arr[$index] = getPublishDateAndCount($chapter['href']);
+        }
         foreach ($new_list as $index => $chapter) {
             if ($chapter['chapter'] > $max_chapter['max']) {
-                $date_and_count = getPublishDateAndCount($chapter['href']);
                 $data_arr = [
                     'name'      => $chapter['title'],
-                    'desc'      => "",
-                    'end_time'      => "",
-                    'chapter'   => $chapter['chapter'],
+                    'end_time'  => "",
                     'collect'   => $result['collect'],
                     'comment'   => $result['comment'],
                     'recommend' => $result['recommend'],
@@ -143,20 +144,32 @@ do{
                 $dbConn->insert('novels',$data_arr);
             } else {
                 // 更新章节数据
+                $chapter_old = $dbConn->fetchRow("select * from novels where chapter = {$chapter['chapter']}");
                 if ($index != count($new_list) - 1) {
-                    $chapter_old = $dbConn->fetchRow("select * from novels where chapter = {$chapter['chapter']}");
-                    $date_and_count = getPublishDateAndCount($chapter['href']);
+                    if ($chapter_old['auto_flag'] == 0) {
+                        $chapter_first = $dbConn->fetchRow("select * from novel_info where create_time <= '{$href_date_arr[$index]['publish_time']}' order by id desc limit 1");
+                        $chapter_second = $dbConn->fetchRow("select * from novel_info where create_time <= '{$href_date_arr[$index + 1]['publish_time']}' order by id desc limit 1");
+                        $data_arr = [
+                            'collect'   => $chapter_second['collect'] - $chapter_first['collect'],
+                            'comment'   => $chapter_second['comment'] - $chapter_first['comment'],
+                            'recommend' => $chapter_second['recommend'] - $chapter_first['recommend'],
+                            'click'     => $chapter_second['click'],
+                            'end_time' => date('Y-m-d H:i:s',time() + 8 *3600 ),
+                            'auto_flag' => 1,
+                        ];
+                        $diff = getShowInfo($chapter['chapter'],$dbConn);
+                        if ($diff) {
+                            $data_arr['collect_show'] = $diff['collect'];
+                        }
+                        $dbConn->update('novels',['id' => $chapter_old['id']],$data_arr);
+                    }
+                } else {
                     $data_arr = [
                         'collect'   => $result['collect'] - $chapter_old['collect'],
                         'comment'   => $result['comment'] - $chapter_old['comment'],
                         'recommend' => $result['recommend'] - $chapter_old['recommend'],
                         'click'     => $result['click'],
-                        'end_time' => date('Y-m-d H:i:s',time() + 8 *3600 ),
                     ];
-                    $diff = getShowInfo($chapter['chapter'],$dbConn);
-                    if ($diff) {
-                        $data_arr['collect_show'] = $diff['collect'];
-                    }
                     $dbConn->update('novels',['id' => $chapter_old['id']],$data_arr);
                 }
             }
@@ -168,6 +181,8 @@ do{
             'id'             => false,
             'collect'        => $result['collect'],
             'click'          => $result['click'],
+            'recommend'      => $result['recommend'],
+            'comment'        => $result['comment'],
             // 'create_time' => date('Y-m-d H:i:s',time() + 8 * 3600),
         );
         $id = $dbConn->insert('novel_info', $data);
