@@ -135,12 +135,14 @@ do{
             if ($chapter['chapter'] > $max_chapter['max']) {
                 $data_arr = [
                     'name'      => $chapter['title'],
+                    'volume'   => 1,
+                    'chapter'   => $chapter['chapter'],
                     'end_time'  => "",
                     'collect'   => $result['collect'],
                     'comment'   => $result['comment'],
                     'recommend' => $result['recommend'],
                 ];
-                $data_arr = array_merge($data_arr,$date_and_count);
+                $data_arr = array_merge($data_arr,$href_date_arr[$index]);
                 $dbConn->insert('novels',$data_arr);
             } else {
                 // 更新章节数据
@@ -164,10 +166,11 @@ do{
                         $dbConn->update('novels',['id' => $chapter_old['id']],$data_arr);
                     }
                 } else {
+                    $chapter_origin = $dbConn->fetchRow("select * from novel_info where create_time <= '{$href_date_arr[$index]['publish_time']}' order by id desc limit 1");
                     $data_arr = [
-                        'collect'   => $result['collect'] - $chapter_old['collect'],
-                        'comment'   => $result['comment'] - $chapter_old['comment'],
-                        'recommend' => $result['recommend'] - $chapter_old['recommend'],
+                        'collect'   => $result['collect'] - $chapter_origin['collect'],
+                        'comment'   => $result['comment'] - $chapter_origin['comment'],
+                        'recommend' => $result['recommend'] - $chapter_origin['recommend'],
                         'click'     => $result['click'],
                     ];
                     $dbConn->update('novels',['id' => $chapter_old['id']],$data_arr);
