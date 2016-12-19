@@ -23,56 +23,61 @@ $dbConn = new \Simplon\Mysql\Mysql(
 );
 
 $flag = false;
-$title = "从零开始当魔王";
+$title_arr = [
+    //"从零开始当魔王",
+    "被二次元玩坏了怎么办"
+];
 $table = "web_novel_show_log";
-$data = [];
 do {
-    $html = file_get_dom('http://www.hbooker.com/index');
-    if ($html) {
-        foreach ($html('div[class="book-list-table-wrap"]') as $e) {
-            foreach ($e('.book-list-table') as $one) {
-                foreach ($one('tr') as $two) {
-                    $final_flag = 0;
-                    foreach($two('td') as $three) {
-                        if ($final_flag == 2) {
-                            foreach ($three('p') as $final) {
-                                $novel_title =  $final->getChild(0)->getInnerText();
-                                if (strstr($novel_title,$title)) {
-                                    $flag = true;
-                                    $data['title'] = $novel_title;
-                                } else {
-                                    $flag = false;
+    foreach ($title_arr as $title) {
+        $data = [];
+        $html = file_get_dom('http://www.hbooker.com/index');
+        if ($html) {
+            foreach ($html('div[class="book-list-table-wrap"]') as $e) {
+                foreach ($e('.book-list-table') as $one) {
+                    foreach ($one('tr') as $two) {
+                        $final_flag = 0;
+                        foreach($two('td') as $three) {
+                            if ($final_flag == 2) {
+                                foreach ($three('p') as $final) {
+                                    $novel_title =  $final->getChild(0)->getInnerText();
+                                    if (strstr($novel_title,$title)) {
+                                        $flag = true;
+                                        $data['title'] = $novel_title;
+                                    } else {
+                                        $flag = false;
+                                    }
                                 }
-                            }
-                            foreach ($three('span') as $final) {
-                                $novel_chapter =  $final->getChild(0)->getInnerText();
-                                if ($flag) {
-                                    $all_arr = explode('.',$novel_chapter);
-                                    $data['chapter'] = trim($all_arr[0]);
-                                    $data['name'] = trim($all_arr[1]);
-                                }                             
-                            }
-                        } 
-                        $final_flag++;
+                                foreach ($three('span') as $final) {
+                                    $novel_chapter =  $final->getChild(0)->getInnerText();
+                                    if ($flag) {
+                                        $all_arr = explode('.',$novel_chapter);
+                                        $data['chapter'] = trim($all_arr[0]);
+                                        $data['name'] = trim($all_arr[1]);
+                                    }                             
+                                }
+                            } 
+                            $final_flag++;
+                        }
                     }
                 }
             }
-        }
-        $title_result = $dbConn->fetchRow("select * from {$table}  where name = '{$data['name']}' and chapter = '{$data['chapter']}' ");
-        if (!empty($data)) {
-            if (empty($title_result)) {
-                $data['id'] = false;
-                $id = $dbConn->insert($table, $data);
+            if (!empty($data)) {
+                $title_result = $dbConn->fetchRow("select * from {$table}  where name = '{$data['name']}' and chapter = '{$data['chapter']}' ");
+                if (empty($title_result)) {
+                    $data['id'] = false;
+                    $id = $dbConn->insert($table, $data);
+                }
+            } else {
+                $update_result = $dbConn->fetchRow("select * from {$table}  where end_time = ''");
+                $conds = [
+                    'id' => $update_result['id']
+                ];
+                $update_data = [
+                    'end_time' => date('Y-m-d H:i:s',time() + 8 * 3600),
+                ];
+                $id = $dbConn->update($table,$conds, $update_data);
             }
-        } else {
-            $update_result = $dbConn->fetchRow("select * from {$table}  where end_time = ''");
-            $conds = [
-                'id' => $update_result['id']
-            ];
-            $update_data = [
-                'end_time' => date('Y-m-d H:i:s',time() + 8 * 3600),
-            ];
-            $id = $dbConn->update($table,$conds, $update_data);
-        }
-    } 
+        } 
+    }
 } while (!$html); 

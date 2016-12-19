@@ -8,7 +8,7 @@
 	<link href="/metro/css/bootstrap-responsive.min.css" rel="stylesheet">
 	<link href="/metro/css/style.css" id="base-style" rel="stylesheet">
 	<link href="/metro/css/style-responsive.css" id="base-style-responsive" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
+	<link href='/css/other/google.fonts.css' rel='stylesheet' type='text/css'>
     <script type="text/javascript">
     var $Info = {}; 
     </script>
@@ -37,6 +37,7 @@
     -->
     
     <script src="/metro/js/jquery-1.9.1.min.js"></script>
+
     <script src="/metro/js/jquery.ui.touch-punch.js"></script>
 	<script src="/metro/js/jquery-migrate-1.0.0.min.js"></script>
     <script src="/metro/js/jquery-ui-1.10.0.custom.min.js"></script>
@@ -48,6 +49,7 @@
     <script src="/metro/js/jquery.uniform.min.js"></script>
     <script src="/metro/js/jquery.cleditor.min.js"></script>
     <script src="/metro/js/jquery.noty.js"></script>
+    
     <script src="/metro/js/jquery.elfinder.min.js"></script>
     <script src="/metro/js/jquery.raty.min.js"></script>
     <script src="/metro/js/jquery.iphone.toggle.js"></script>
@@ -61,13 +63,16 @@
     <script src="/metro/js/retina.js"></script>
     <script src="/metro/js/custom.js"></script>
     <script src="/metro/js/modernizr.js"></script>
+
     <script src="/metro/js/bootstrap.min.js"></script>
+
     <script src="/metro/js/jquery.cookie.js"></script>
     <script src='/metro/js/fullcalendar.min.js'></script>
     <script src='/metro/js/jquery.dataTables.min.js'></script>
     <script src="/metro/js/excanvas.js"></script>
 
     <script src="/js/jquery/jquery.namespace.js"></script>
+    <script type="text/javascript" src="/js/common/info.js" ></script>
     {% block foot_script %}{% endblock %}
 </body>
 </html>

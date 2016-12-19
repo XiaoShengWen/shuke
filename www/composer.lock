@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "35209d237fb114b589135148448bc970",
-    "content-hash": "65da6bdef2377bad00f5c9b0846c91ed",
+    "hash": "40ddb5b933ad0dc17a27ceb87574f927",
+    "content-hash": "d0e7fced52cd3526eece274035a1461d",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -343,6 +343,51 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "simplon/mysql",
+            "version": "1.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fightbulc/simplon_mysql.git",
+                "reference": "c60b96b829b882b8a4d0a631b85a98f489673cd8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://packagist.phpcomposer.com/files/fightbulc/simplon_mysql/c60b96b829b882b8a4d0a631b85a98f489673cd8.zip",
+                "reference": "c60b96b829b882b8a4d0a631b85a98f489673cd8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Simplon\\Mysql\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tino Ehrich",
+                    "email": "tino@bigpun.me",
+                    "role": "developer"
+                }
+            ],
+            "description": "Simplon MySQL Library",
+            "homepage": "https://github.com/fightbulc/simplon_mysql",
+            "keywords": [
+                "db",
+                "manager",
+                "mysql",
+                "pdo"
+            ],
+            "time": "2016-05-13 14:06:48"
         }
     ],
     "packages-dev": [],

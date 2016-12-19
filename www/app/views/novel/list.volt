@@ -17,7 +17,7 @@ $Info['chart'] = '{{ chart }}';
         <a href="index.html">主页</a> 
         <i class="icon-angle-right"></i>
     </li>
-    <li><a href="#">轻小说</a></li>
+    <li><a href="#">个人小说</a></li>
 </ul>
 <!--面包屑结束-->
 
@@ -297,7 +297,6 @@ $Info['chart'] = '{{ chart }}';
    
 {% block foot_script %} 
 <script type="text/javascript" src="/js/web/novel/list.js" ></script>
-<script type="text/javascript" src="/js/common/info.js" ></script>
 <script type="text/javascript" src="/js/jquery/jquery.datetimepicker.full.js" ></script>
 <script type="text/javascript" src="/js/other/echarts.common.min.js" ></script>
 {% endblock %}

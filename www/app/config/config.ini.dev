@@ -7,7 +7,7 @@ database = "wall-breaker"
 [mysql]
 host = "123.57.41.158"
 username = "root"
-password = "123456"
+password = "a20138502@wzy-360"
 database = "novel"
 
    

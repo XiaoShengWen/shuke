@@ -50,11 +50,6 @@ class Novels extends App\Models\BaseModel
         ];
     }
 
-    public function getParam($name)
-    {
-        return $this->$name;
-    }
-
     public function statisticByDate(array $resource, array $field_arr)
     {
         $result = [];
@@ -108,7 +103,7 @@ class Novels extends App\Models\BaseModel
         return $result;
     }
 
-    public function getSumData(array $field_arr ,$novel_id = "sum")
+    public function getSumData(array $field_arr ,$novel_id)
     {
         $columns = [];
         foreach ($field_arr as $field) {
@@ -118,6 +113,7 @@ class Novels extends App\Models\BaseModel
 
         $result = static::find(array(
             'columns' => $columns,
+            'conditions' => "book_id = $novel_id",
             )
         );
         $ret = [];

@@ -1,29 +1,28 @@
 version: '2'
 services:
-  mongo:
-    image: wuzhongyang/test/mongo 
-    container_name: mongo-wallbreaker-${DEV_USER}
-    volumes: 
-      - ../mongodb:/data/db
-      - ../www/database/mongo:/var/www/mongo
-    expose:
-      - "27017"
+  #mongo:
+  #  image: wzy.cloud/library/mongo:3.2 
+  #  container_name: mongo-wallbreaker-${DEV_USER}
+  #  volumes: 
+  #    - ../mongodb:/data/db
+  #    - ../www/database/mongo:/var/www/mongo
+  #  expose:
+  #    - "27017"
   fpm:
     environment:
       - DEBUG=true
-    image: qihoo.cloud/qssweb/abtest-php:0.5.0-base
+    image: wzy.cloud/php-phalcon 
     container_name: fpm-wallbreaker-${DEV_USER}
     volumes:
       # 挂载项目代码目录
       - ../www:/var/www/html/www
-    links:
+    # links:
       # 关联容器, 在该容器中可以通过 `fpm.localhost` 域名访问另一个容器的端口
-      - mongo:mongo.localhost
+      # - mongo:mongo.localhost
     expose:
       - "9000"
-
   nginx:
-    image: qihoo.cloud/library/nginx
+    image: wzy.cloud/library/nginx:1.9.8 
     container_name: nginx-wallbreaker-${DEV_USER}
     volumes:
       # 加载项目nginx配置
@@ -35,4 +34,13 @@ services:
       - fpm:fpm.localhost
     ports:
       - "${DEV_PORT}:8000"
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456 
+    image: docker.io/mysql 
+    container_name: mysql-${DEV_USER}
+    volumes:
+      - ../mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
 

@@ -1,8 +1,5 @@
 <?php
-include dirname(__DIR__)."/app/library/ganon.php";
-include dirname(__DIR__)."/vendor/autoload.php";
-ini_set('date.timezone','Asia/Shanghai');
-date_default_timezone_set('Asia/Shanghai');
+include dirname(__DIR__)."/script/basic.php";
 
 // 获取论坛页面，判断包含书名的帖子在第一页是否存在
 function getForumInfo($href, $novel_title)
@@ -11,64 +8,98 @@ function getForumInfo($href, $novel_title)
     $exist_flag = false;
     do{
         $html = file_get_dom($href);
+        $final_position = 15;
         foreach ($html("div[class='ly-main']") as $one) {
+            $show_num_position = 0;
             foreach ($one("tr") as $two) {
                 foreach ($two("a") as $three) {
                     $title = $three->getChild(0)->getInnerText();
                     $show_flag = strstr($title,$novel_title);
                     if ($show_flag) {
                         $exist_flag = true;
+                        $final_position = $show_num_position - 2;
                         break;
                     }                
+                    $show_num_position++;
                 }
+                if ($exist_flag) {
+                    break;
+                }                
             }
+            if ($exist_flag) {
+                break;
+            }                
         }
-        if (!$exist_flag) {
-            $post_href = "http://www.hbooker.com/bbs/add_bbs_comment";
 
-            $cookie = "qdgd=1; ci_session=376f9d40a3c9b2d17ed9e71716b37f24e9e7e8e8; user_id=496128; get_task_type_sign=1; visits=11; Hm_lvt_e843afdff94820d69cd6d82d24b9647e=1473125124,1473125257,1473814438,1474164321; Hm_lpvt_e843afdff94820d69cd6d82d24b9647e=1474166223; CNZZDATA1259915916=53349536-1472606076-%7C1474164415";
+        $show_limit = 9;
+        if ($final_position > $show_limit) {
+            $show_flag = false;
+        }
 
-            $post_arr = [
-                //"bbs_id" => 58211,
-                "bbs_id" => "test",
-                "comment_content" => "♪(^∇^*)",
-            ];
-            postForum($post_href, $post_arr, $cookie);
+        $control_flag = getFlag();
+        $dbConn = getDbConn();
+        $forum_log = $dbConn->fetchRow("select * from control_flag where type = {$control_flag['forum']}");
+        $forum_flag = $forum_log['flag'];
+        $forum_id = $forum_log['id'];
+
+        if (!$exist_flag || !$show_flag || !$forum_flag) {
+            postForum($dbConn, $forum_id);
         } else {
-            var_dump("标题存在");
+            echo "标题已存在";
         }
     } while(!$html);
     return $result;
 }
 
+
 $href = "http://www.hbooker.com/bbs/shuhuang";
-$novel_title = "从零开始当魔王";
+$novel_title = "被二次元玩坏了怎么办";
 getForumInfo($href, $novel_title);
 
-function postForum($href, $post_data, $cookie)
+function postForum($dbConn, $forum_id)
 {
-    //初始化
-    $curl = curl_init();
-    //设置抓取的url
-    curl_setopt($curl, CURLOPT_URL, $href);
-    //设置头文件的信息作为数据流输出
-    curl_setopt($curl, CURLOPT_HEADER, 1);
-    //设置获取的信息以文件流的形式返回，而不是直接输出。
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    //设置post方式提交
-    curl_setopt($curl, CURLOPT_POST, 1);
-    //设置cookie
-    curl_setopt ($curl, CURLOPT_COOKIE , $cookie);
-    //设置post数据
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
-    //执行命令
-    $data = curl_exec($curl);
-    //关闭URL请求
-    curl_close($curl);
-    //显示获得的数据
-    $response_arr = json_decode($data,true);
-    if ($response_arr['code'] != 100000) {
-        var_dump($response_arr);
-        echo "发送失败";
-    } 
+
+    $href = "http://www.hbooker.com/bbs/add_bbs_comment";
+
+    $cookie_arr = [
+        "user_id=775599",
+        "reader_id=775599",
+        "login_token=c54776db3093277af498c83ed5dbdc60",
+        // "qdgd=1",
+        // "get_task_type_sign=1",
+        /* "Hm_lvt_e843afdff94820d69cd6d82d24b9647e=1473125257,1473814438,1474249285,1474252426", */
+        /* "Hm_lpvt_e843afdff94820d69cd6d82d24b9647e=1474266547", */
+        /* "visits=16", */
+        /* "CNZZDATA1259915916=1039889845-1474261629-http%253A%252F%252Fwww.hbooker.com%252F%7C1474261629" */
+    ];
+    $session = $dbConn->fetchRow("select * from login_session order by id desc limit 1");
+    $cookie_arr[] = $session['session'];
+
+    $comment_arr = [
+        "(>▽<)",
+        "＜（＾－＾）＞",
+        "Ｏ(≧口≦)Ｏ",
+        "(～￣▽￣)～"
+    ];
+    $post_data = [
+        "bbs_id" => 61647,
+    ];
+    $post_data['comment_content'] = $comment_arr[array_rand($comment_arr,1)];
+    $cookie = getCookie($cookie_arr);
+    $ret = curlForum($href, $cookie, $post_data);
+    $ret_arr = explode("\n",$ret);
+    $response_arr = json_decode(end($ret_arr),true);
+
+    switch ($response_arr['code']) {
+        default:
+            echo '<pre>';
+            var_dump($response_arr); 
+            echo '</pre>';
+            $dbConn->update('control_flag',['id' => $forum_id],['flag' => 0]);
+            break;
+        case 100000:
+            $dbConn->update('control_flag',['id' => $forum_id],['flag' => 1]);
+            break;
+    }
 }
+

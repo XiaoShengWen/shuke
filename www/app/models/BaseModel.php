@@ -5,7 +5,7 @@ use Phalcon\Mvc\Model;
 
 class BaseModel extends Model 
 {
-    public static function getODMList($page = 1, $size = 100, array $filter = [], $order = "id")
+    public static function getODMList($page = 1, $size = 100, $filter, $order = "id")
     {
         $limit_start = ($page - 1) * $size;
         $limit_end = $page * $size;
@@ -19,5 +19,10 @@ class BaseModel extends Model
         $result = static::find($condition);
 
         return $result->toArray();
+    }
+
+    public function getParam($name)
+    {
+        return $this->$name;
     }
 }

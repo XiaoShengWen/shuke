@@ -72,7 +72,6 @@ $(function() {
         chart_arr[key].setOption(option);
     }
 
-
     // 时间按钮
     $('#publish_time').datetimepicker();
 

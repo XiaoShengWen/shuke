@@ -5,6 +5,11 @@ class NovelController extends BaseController
 {
     protected $novel = null;
 
+    public $book_id_arr = [
+        "100017833" => "从零开始当魔王",
+        "100019398" => "被二次元玩坏了怎么办",
+    ];
+
     public function initialize() {
         $id = trim($this->request->get('id'));
         if ($id) {
@@ -12,16 +17,24 @@ class NovelController extends BaseController
         } 
     }
 
+    // 罗列个人书籍
+    public function bookAction()
+    {
+        $this->view->book_list = $this->book_id_arr;
+    }
+
     public function listAction()
     {
         $conf = [
             'page_no' => ['int', 1, false],
+            'book_id' => ['int', 100019398, false],
+            //'book_id' => ['int', 100017833, false],
         ];
 
         // 章节统计
         $params = $this->getParams($conf);
         $novel = new Novels();
-        $result = $novel->getODMList(1, 1000, [], 'id desc'); 
+        $result = $novel->getODMList(1, 1000, "book_id = {$params['book_id']}", 'id desc'); 
         $paginator = new PaginatorArray(
             array(
                 "data"  => $result,
@@ -72,7 +85,7 @@ class NovelController extends BaseController
         $this->view->chart = json_encode($chart);
 
         // 数据综合
-        $sum_data = $novel->getSumData($field_arr);
+        $sum_data = $novel->getSumData($field_arr, $params['book_id']);
         $this->view->sum_data = $sum_data;
         $this->view->params_note = $novel->getParamsNote();
     }

@@ -46,4 +46,11 @@ class BaseController extends Controller
         $this->response->setStatusCode(200);
         return $this->response->send();
     }
+
+    public function responseJsonRaw(array $data = [])
+    {
+        $this->response->setJsonContent($data);
+        $this->response->setStatusCode(200);
+        return $this->response->send();
+    }
 }                   
